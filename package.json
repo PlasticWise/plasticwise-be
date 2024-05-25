@@ -1,0 +1,38 @@
+{
+  "name": "plasticwise-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node -r dotenv/config src/index.js",
+    "dev": "nodemon -r dotenv/config src/index.js",
+    "lint:fix": "eslint --fix --ext .js .",
+    "prepare": "husky",
+    "format:check": "prettier --check .",
+    "lint": "eslint . --ext .js",
+    "format": "prettier --write .",
+    "test-all": "npm run format:check && npm run lint && npm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "lint-staged": {
+    "*.{js,jsx}": "eslint --fix",
+    "*.{js,jsx,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "@hapi/hapi": "^21.3.9",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.4",
+    "nodemon": "^3.1.0",
+    "prettier": "^3.2.5"
+  }
+}
