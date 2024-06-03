@@ -1,5 +1,6 @@
 const Boom = require('@hapi/boom');
 const admin = require('../utils/firebase');
+const prisma = require('../utils/db');
 
 const validateUser = async (request, h) => {
   const token = request.headers.authorization?.split(' ')[1];
@@ -8,7 +9,23 @@ const validateUser = async (request, h) => {
   }
   try {
     const decodedToken = await admin.auth().verifyIdToken(token);
-    request.user = decodedToken;
+    const user = await admin.auth().getUser(decodedToken.uid);
+
+    //cari atau buat pengguna di database
+    const dbUser = await prisma.user.upsert({
+      where: { id: user.uid },
+      update: {
+        email: user.email,
+        displayName: user.displayName
+      },
+      create: {
+        id: user.uid,
+        email: user.email,
+        displayName: user.displayName
+      }
+    });
+
+    request.user = dbUser;
     return h.continue;
   } catch (error) {
     throw Boom.unauthorized('Invalid token');

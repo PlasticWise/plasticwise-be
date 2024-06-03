@@ -2,14 +2,15 @@ const { uploadToGCS } = require('../upload');
 const { prisma } = require('../utils/db');
 
 const addPosts = async (request, h) => {
-  const { author, title, body } = request.payload;
+  const { title, body, categories } = request.payload;
   const file = request.payload.file;
+  const authorId = request.user;
 
   //validating title and author
   const titleCheck = request.payload.hasOwnProperty('title');
-  const authorCheck = request.payload.hasOwnProperty('author');
+  const authorCheck = request.payload.hasOwnProperty('authorId');
 
-  if (!titleCheck || !authorCheck) {
+  if (!titleCheck && authorCheck !== null) {
     const response = h.response({
       status: 'fail',
       message: 'Gagal menambahkan postingan'
@@ -27,9 +28,10 @@ const addPosts = async (request, h) => {
   const post = await prisma.post.create({
     data: {
       title: title,
-      author: author,
+      authorId: authorId,
       uri_thumbnail: imageUrl,
-      body: body
+      body: body,
+      categories: categories
     }
   });
   return post;
@@ -74,7 +76,7 @@ const getPostsById = async (request, h) => {
 const updatePost = async (request, h) => {
   try {
     const { id } = request.params;
-    const { title, content } = request.payload;
+    const { title, body, categories } = request.payload;
     const file = request.payload.file;
 
     let imageUrl = null;
@@ -83,7 +85,7 @@ const updatePost = async (request, h) => {
     }
     const post = await prisma.post.update({
       where: { id: id },
-      data: { title, content, imageUrl }
+      data: { title, body, categories, imageUrl }
     });
     return post;
   } catch (error) {

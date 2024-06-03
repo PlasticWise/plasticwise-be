@@ -4,61 +4,61 @@ const {
   upload
 } = require('@google-cloud/storage/build/cjs/src/resumable-upload');
 const {
-  addTutorials,
-  getTutorials,
-  getTutorialsById,
+  addCrafting,
+  getCrafting,
+  getCraftingById,
   updateTutorial,
   deleteTutorial
-} = require('../controllers/tutorials.controller');
+} = require('../controllers/crafting.controller');
 
-const tutorialsPlugin = {
-  name: 'app/tutorials',
+const craftingPlugin = {
+  name: 'app/crafting',
   dependencies: ['prisma'],
   register: async function (server) {
+    // server.route([
+    //   {
+    //     method: 'POST',
+    //     path: 'api/v1/crafting',
+    //     options: {
+    //       payload: { output: 'stream', parse: true, multipart: true }
+    //     },
+    //     handler: addCrafting,
+    //     pre: [{ method: upload.single('file'), assign: 'file' }]
+    //   }
+    // ]);
+
     server.route([
       {
-        method: 'POST',
-        path: 'api/v1/tutorials',
-        options: {
-          payload: { output: 'stream', parse: true, multipart: true }
-        },
-        handler: addTutorials,
-        pre: [{ method: upload.single('file'), assign: 'file' }]
+        method: 'GET',
+        path: 'api/v1/crafting',
+        handler: getCrafting
       }
     ]);
 
     server.route([
       {
         method: 'GET',
-        path: 'api/v1/tutorials',
-        handler: getTutorials
+        path: 'api/v1/crafting/{id}',
+        handler: getCraftingById
       }
     ]);
 
-    server.route([
-      {
-        method: 'GET',
-        path: 'api/v1/tutorials/{id}',
-        handler: getTutorialsById
-      }
-    ]);
+    // server.route([
+    //   {
+    //     method: 'PATCH',
+    //     path: 'api/v1/crafting/{id}',
+    //     handler: updateTutorial
+    //   }
+    // ]);
 
-    server.route([
-      {
-        method: 'PATCH',
-        path: 'api/v1/tutorials/{id}',
-        handler: updateTutorial
-      }
-    ]);
-
-    server.route([
-      {
-        method: 'DELETE',
-        path: 'api/v1/tutorials/{id}',
-        handler: deleteTutorial
-      }
-    ]);
+    // server.route([
+    //   {
+    //     method: 'DELETE',
+    //     path: 'api/v1/crafting/{id}',
+    //     handler: deleteTutorial
+    //   }
+    // ]);
   }
 };
 
-module.exports = tutorialsPlugin;
+module.exports = craftingPlugin;
