@@ -1,15 +1,13 @@
 'use strict';
 
 const {
-  upload
-} = require('@google-cloud/storage/build/cjs/src/resumable-upload');
-const {
   addPosts,
   getPosts,
   getPostsById,
   updatePost,
   deletePost
 } = require('../controllers/posts.controller');
+const { upload } = require('../utils/upload');
 
 const postsPlugin = {
   name: 'app/posts',
@@ -18,19 +16,15 @@ const postsPlugin = {
     server.route([
       {
         method: 'POST',
-        path: 'api/v1/posts',
-        options: {
-          payload: { output: 'stream', parse: true, multipart: true }
-        },
-        handler: addPosts,
-        pre: [{ method: upload.single('file'), assign: 'file' }]
+        path: '/api/v1/posts',
+        handler: addPosts
       }
     ]);
 
     server.route([
       {
         method: 'GET',
-        path: 'api/v1/posts',
+        path: '/api/v1/posts',
         handler: getPosts
       }
     ]);
@@ -38,7 +32,7 @@ const postsPlugin = {
     server.route([
       {
         method: 'GET',
-        path: 'api/v1/posts/{id}',
+        path: '/api/v1/posts/{id}',
         handler: getPostsById
       }
     ]);
@@ -46,7 +40,7 @@ const postsPlugin = {
     server.route([
       {
         method: 'PATCH',
-        path: 'api/v1/posts/{id}',
+        path: '/api/v1/posts/{id}',
         handler: updatePost
       }
     ]);
@@ -54,7 +48,7 @@ const postsPlugin = {
     server.route([
       {
         method: 'DELETE',
-        path: 'api/v1/posts/{id}',
+        path: '/api/v1/posts/{id}',
         handler: deletePost
       }
     ]);

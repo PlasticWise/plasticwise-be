@@ -1,4 +1,4 @@
-const { uploadToGCS } = require('../upload');
+const { uploadToGCS } = require('../utils/upload');
 const { prisma } = require('../utils/db');
 
 const addPosts = async (request, h) => {

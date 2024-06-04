@@ -1,6 +1,5 @@
 const Hapi = require('@hapi/hapi');
 const prisma = require('./plugins/prisma.plugins');
-const users = require('./plugins/users.plugins');
 const posts = require('./plugins/posts.plugins');
 const firebase = require('./plugins/firebase.plugins');
 const tutorials = require('./plugins/tutorials.plugins');
@@ -18,7 +17,7 @@ const init = async () => {
     handler: (request, h) => 'Hello, Hapi!'
   });
 
-  await server.register([prisma, users, posts, tutorials, firebase, auth]);
+  await server.register([prisma, posts, firebase, tutorials, auth]);
   await server.start();
   console.log('Server running on %s', server.info.uri);
 };

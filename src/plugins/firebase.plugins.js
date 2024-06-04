@@ -11,7 +11,7 @@ const validateUser = async (request, h) => {
     const decodedToken = await admin.auth().verifyIdToken(token);
     const user = await admin.auth().getUser(decodedToken.uid);
 
-    //cari atau buat pengguna di database
+    // cari atau buat pengguna di database
     const dbUser = await prisma.user.upsert({
       where: { id: user.uid },
       update: {
@@ -28,7 +28,7 @@ const validateUser = async (request, h) => {
     request.user = dbUser;
     return h.continue;
   } catch (error) {
-    throw Boom.unauthorized('Invalid token');
+    throw Boom.unauthorized(error);
   }
 };
 

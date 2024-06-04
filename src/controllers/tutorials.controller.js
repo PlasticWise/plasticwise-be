@@ -1,4 +1,4 @@
-const { uploadToGCS } = require('../upload');
+const { uploadToGCS } = require('../utils/upload');
 const { prisma } = require('../utils/db');
 
 // const addTutorials = async (request, h) => {
@@ -113,9 +113,9 @@ const getTutorialsById = async (request, h) => {
 // };
 
 module.exports = {
-  addTutorials,
+  // addTutorials,
   getTutorials,
-  getTutorialsById,
-  updateTutorial,
-  deleteTutorial
+  getTutorialsById
+  // updateTutorial,
+  // deleteTutorial
 };
