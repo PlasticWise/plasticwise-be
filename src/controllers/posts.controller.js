@@ -29,7 +29,7 @@ const addPosts = async (request, h) => {
     data: {
       title: title,
       authorId: authorId,
-      uri_thumbnail: imageUrl,
+      imageUrl: imageUrl,
       body: body,
       categories: categories
     }
