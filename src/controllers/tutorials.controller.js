@@ -36,6 +36,7 @@ const { prisma } = require('../utils/db');
 // };
 
 const getTutorials = async (request, h) => {
+  //TODO: get Data from static json data and storing to database
   try {
     const tutorials = await prisma.tutorial.findMany();
     return tutorials;
@@ -50,6 +51,7 @@ const getTutorials = async (request, h) => {
 };
 
 const getTutorialsById = async (request, h) => {
+  //TODO: get Data from static json data and storing to database
   try {
     const { id } = request.params;
 

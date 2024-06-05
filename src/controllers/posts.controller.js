@@ -2,39 +2,48 @@ const { uploadToGCS } = require('../utils/upload');
 const { prisma } = require('../utils/db');
 
 const addPosts = async (request, h) => {
-  const { title, body, categories } = request.payload;
-  const file = request.payload.file;
-  const authorId = request.user;
+  try {
+    const { title, body, categories } = request.payload;
+    const file = request.payload.file;
+    const authorId = request.user.id;
 
-  //validating title and author
-  const titleCheck = request.payload.hasOwnProperty('title');
-  const authorCheck = request.payload.hasOwnProperty('authorId');
+    //validating title and author
+    const titleCheck = request.payload.hasOwnProperty('title');
+    const authorCheck = request.payload.hasOwnProperty('authorId');
 
-  if (!titleCheck && authorCheck !== null) {
+    if (!titleCheck && authorCheck !== null) {
+      const response = h.response({
+        status: 'fail',
+        message: 'Gagal menambahkan postingan'
+      });
+      response.code(400);
+      return response;
+    }
+
+    const imageUrl = null;
+
+    if (file) {
+      imageUrl = await uploadToGCS(file);
+    }
+
+    const post = await prisma.post.create({
+      data: {
+        title: title,
+        authorId: authorId,
+        imageUrl: imageUrl,
+        body: body,
+        categories: categories
+      }
+    });
+    return post;
+  } catch (error) {
     const response = h.response({
       status: 'fail',
-      message: 'Gagal menambahkan postingan'
+      message: error.message
     });
-    response.code(400);
+    response.code(500);
     return response;
   }
-
-  const imageUrl = null;
-
-  if (file) {
-    imageUrl = await uploadToGCS(file);
-  }
-
-  const post = await prisma.post.create({
-    data: {
-      title: title,
-      authorId: authorId,
-      imageUrl: imageUrl,
-      body: body,
-      categories: categories
-    }
-  });
-  return post;
 };
 
 const getPosts = async (request, h) => {

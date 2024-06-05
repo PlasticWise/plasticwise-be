@@ -13,6 +13,7 @@ const postsPlugin = {
   name: 'app/posts',
   dependencies: ['prisma'],
   register: async function (server) {
+    //TODO: allowing multipart formdata and multer to gcs
     server.route([
       {
         method: 'POST',
@@ -37,6 +38,7 @@ const postsPlugin = {
       }
     ]);
 
+    //TODO: allowing multipart formdata and multer to gcs
     server.route([
       {
         method: 'PATCH',

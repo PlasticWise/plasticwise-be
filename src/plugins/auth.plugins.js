@@ -1,7 +1,6 @@
 const admin = require('../utils/firebase');
 const Boom = require('@hapi/boom');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const { prisma } = require('../utils/db');
 
 const authPlugin = {
   name: 'auth',
@@ -10,6 +9,13 @@ const authPlugin = {
     server.route([
       {
         method: 'POST',
+        options: {
+          plugins: {
+            firebasePlugin: {
+              authRequired: false // No authentication required for the register route
+            }
+          }
+        },
         path: '/api/v1/register',
         handler: async (request, h) => {
           const { email, password, displayName } = request.payload;
@@ -20,7 +26,7 @@ const authPlugin = {
               password,
               displayName
             });
-            const listUser = await admin.auth().listUsers();
+            // const listUser = await admin.auth().listUsers();
             await prisma.user.create({
               data: {
                 id: userRecord.uid,
