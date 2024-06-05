@@ -1,28 +1,31 @@
-const predictDetection = require('../services/inferenceService');
-const crypto = require('crypto');
-const storeData = require('../services/storeData');
+const predictClassification = require('../services/inferenceService');
+const { v4: uuidv4 } = require('uuid');
 
 async function postDetectHandler(request, h) {
   const { image } = request.payload;
   const { model } = request.server.app;
 
   try {
-    const { result, suggestion } = await predictDetection(model, image);
-    const id = crypto.randomUUID();
+    const { confidenceScore, label, message } = await predictClassification(
+      model,
+      image
+    );
+    const id = uuidv4();
     const createdAt = new Date().toISOString();
 
     const data = {
       id: id,
-      result: result,
-      suggestion: suggestion,
+      result: label,
+      message: message,
       createdAt: createdAt
     };
 
-    await storeData(id, data);
-
     const response = h.response({
       status: 'success',
-      message: 'Detection model predicted successfully',
+      message:
+        confidenceScore > 99
+          ? 'Model is predicted successfully.'
+          : 'Model is predicted successfully but under threshold. Please use the correct picture',
       data: data
     });
 

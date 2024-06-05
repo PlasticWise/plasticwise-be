@@ -1,10 +1,12 @@
 const Hapi = require('@hapi/hapi');
 const prisma = require('./plugins/prisma.plugins');
 const posts = require('./plugins/posts.plugins');
-const firebase = require('./plugins/firebase.plugins');
+// const firebase = require('./plugins/firebase.plugins');
 const tutorials = require('./plugins/tutorials.plugins');
-const auth = require('./plugins/auth.plugins');
+// const auth = require('./plugins/auth.plugins');
 const detectionPlugin = require('./plugins/detection.plugins');
+const loadModel = require('../src/services/loadModel');
+const InputError = require('./exceptions/InputError');
 
 const init = async () => {
   const server = Hapi.server({
@@ -17,13 +19,40 @@ const init = async () => {
     }
   });
 
+  const model = await loadModel();
+  server.app.model = model;
+
+  server.ext('onPreResponse', function (request, h) {
+    const response = request.response;
+
+    if (response instanceof InputError) {
+      const newResponse = h.response({
+        status: 'fail',
+        message: `${response.message} Silakan gunakan foto lain.`
+      });
+      newResponse.code(response.statusCode);
+      return newResponse;
+    }
+
+    if (response.isBoom) {
+      const newResponse = h.response({
+        status: 'fail',
+        message: response.message
+      });
+      newResponse.code(response.output.statusCode);
+      return newResponse;
+    }
+
+    return h.continue;
+  });
+
   server.route({
     method: 'GET',
     path: '/',
     handler: (request, h) => 'Hello, Hapi!'
   });
 
-  await server.register([prisma, users, posts, tutorials, firebase]);
+  await server.register([prisma, posts, tutorials, detectionPlugin]);
   await server.start();
   console.log('Server running on %s', server.info.uri);
 };
