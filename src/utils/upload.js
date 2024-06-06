@@ -35,7 +35,7 @@ const uploadToGCS = file => {
       reject(err);
     });
     blobStream.on('finish', () => {
-      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+      const publicUrl = `https://storage.googleapis.com/${bucket.name}/thumbnail/${blob.name}`;
       resolve(publicUrl);
     });
     blobStream.end(file.buffer);

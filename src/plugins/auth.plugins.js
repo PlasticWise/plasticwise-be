@@ -27,14 +27,17 @@ const authPlugin = {
               displayName
             });
             // const listUser = await admin.auth().listUsers();
-            await prisma.user.create({
+            const data = await prisma.user.create({
               data: {
                 id: userRecord.uid,
                 email: userRecord.email,
                 displayName: userRecord?.displayName
               }
             });
-            return h.response({ message: 'User registered successfully' });
+            return h.response({
+              message: 'User registered successfully',
+              data
+            });
           } catch (error) {
             return Boom.badRequest(error.message);
           }
