@@ -7,7 +7,9 @@ const {
   updatePost,
   deletePost
 } = require('../controllers/posts.controller');
-const { upload } = require('../utils/upload');
+// const { uploadToGCS } = require('../utils/upload');
+// const { upload } = require('../utils/upload');
+// const { upload } = require('../utils/upload');
 
 const postsPlugin = {
   name: 'app/posts',
@@ -18,7 +20,17 @@ const postsPlugin = {
       {
         method: 'POST',
         path: '/api/v1/posts',
-        handler: addPosts
+        handler: addPosts,
+        options: {
+          payload: {
+            maxBytes: 1048576 * 3, //3MB Limit
+            output: 'stream',
+            parse: true,
+            allow: 'multipart/form-data',
+            multipart: true
+          }
+          // pre: [{ method: upload.single('file'), assign: 'file' }]
+        }
       }
     ]);
 
@@ -42,6 +54,13 @@ const postsPlugin = {
     server.route([
       {
         method: 'PATCH',
+        options: {
+          payload: {
+            output: 'stream',
+            parse: true,
+            allow: 'multipart/form-data'
+          }
+        },
         path: '/api/v1/posts/{id}',
         handler: updatePost
       }

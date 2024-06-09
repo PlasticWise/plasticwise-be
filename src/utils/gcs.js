@@ -7,4 +7,4 @@ const storage = new Storage({
 
 const bucket = storage.bucket(process.env.GCS_BUCKET_NAME);
 
-module.exports = bucket;
+module.exports = { bucket };

@@ -1,4 +1,5 @@
 const Hapi = require('@hapi/hapi');
+const Inert = require('@hapi/inert');
 const prisma = require('./plugins/prisma.plugins');
 const posts = require('./plugins/posts.plugins');
 const firebase = require('./plugins/firebase.plugins');
@@ -17,6 +18,8 @@ const init = async () => {
       }
     }
   });
+
+  await server.register(Inert);
 
   server.route({
     method: 'GET',

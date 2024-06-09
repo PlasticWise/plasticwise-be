@@ -1,10 +1,11 @@
-const { uploadToGCS } = require('../utils/upload');
+// const { uploadToGCS } = require('../utils/upload');
 const { prisma } = require('../utils/db');
+const path = require('path');
+const { uploadToGCS } = require('../utils/upload');
 
 const addPosts = async (request, h) => {
   try {
-    const { title, body, categories } = request.payload;
-    const file = request.payload.file;
+    const { title, body, categories, type, file } = request.payload;
     const authorId = request.user.id;
 
     //validating title and author
@@ -20,11 +21,30 @@ const addPosts = async (request, h) => {
       return response;
     }
 
-    const imageUrl = null;
-
-    if (file) {
-      imageUrl = await uploadToGCS(file);
+    if (!file) {
+      return h
+        .response({ status: 'fail', message: 'Image is required' })
+        .code(500);
     }
+
+    // Read the file stream into a buffer
+    const fileBuffer = await new Promise((resolve, reject) => {
+      const chunks = [];
+      file.on('data', chunk => {
+        chunks.push(chunk);
+      });
+      file.on('end', () => {
+        resolve(Buffer.concat(chunks));
+      });
+      file.on('error', err => {
+        reject(err);
+      });
+    });
+
+    // Attach the buffer to the file object
+    file.buffer = fileBuffer;
+
+    imageUrl = await uploadToGCS(file);
 
     const post = await prisma.post.create({
       data: {
@@ -32,7 +52,8 @@ const addPosts = async (request, h) => {
         authorId: authorId,
         imageUrl: imageUrl,
         body: body,
-        categories: categories
+        categories: categories,
+        type: type
       }
     });
     return post;
