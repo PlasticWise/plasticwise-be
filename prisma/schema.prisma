@@ -21,7 +21,7 @@ model User {
   updatedAt   DateTime @updatedAt
 
   post     Post[]     @relation("authorPost")
-  tutorial Tutorial[] @relation("authorTutorial")
+  crafting Crafting[] @relation("authorCrafting")
 
   @@map("users")
 }
@@ -42,7 +42,7 @@ model Post {
   @@map("posts")
 }
 
-model Tutorial {
+model Crafting {
   id         String   @id @default(cuid())
   title      String
   tools      String[] //Field untuk menyimpan alat yang digunakan
@@ -55,7 +55,7 @@ model Tutorial {
   categories String //Field untuk menyimpan bahan plastiknya
   type       String? //Field untuk menyimpan jenis plastiknya
 
-  author User @relation("authorTutorial", fields: [authorId], references: [id])
+  author User @relation("authorCrafting", fields: [authorId], references: [id])
 
-  @@map("tutorials")
+  @@map("crafting")
 }

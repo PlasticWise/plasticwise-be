@@ -103,6 +103,30 @@ const getPostsById = async (request, h) => {
   }
 };
 
+const getPostByCategory = async (request, h) => {
+  try {
+    const { categories } = request.params;
+
+    const splitCategory = categories.split('-').join(' ');
+
+    if (!splitCategory) {
+      return h.response({ error: error.message }).code(400);
+    }
+
+    const post = await prisma.post.findFirst({
+      where: {
+        categories: {
+          contains: splitCategory,
+          mode: 'insensitive'
+        }
+      }
+    });
+    return post;
+  } catch (error) {
+    return h.response({ status: 'fail', message: error }).code(500);
+  }
+};
+
 const updatePost = async (request, h) => {
   try {
     const { id } = request.params;
@@ -145,4 +169,11 @@ const deletePost = async (request, h) => {
   }
 };
 
-module.exports = { addPosts, getPosts, getPostsById, updatePost, deletePost };
+module.exports = {
+  addPosts,
+  getPosts,
+  getPostsById,
+  updatePost,
+  deletePost,
+  getPostByCategory
+};

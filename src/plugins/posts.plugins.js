@@ -5,11 +5,9 @@ const {
   getPosts,
   getPostsById,
   updatePost,
-  deletePost
+  deletePost,
+  getPostByCategory
 } = require('../controllers/posts.controller');
-// const { uploadToGCS } = require('../utils/upload');
-// const { upload } = require('../utils/upload');
-// const { upload } = require('../utils/upload');
 
 const postsPlugin = {
   name: 'app/posts',
@@ -29,7 +27,6 @@ const postsPlugin = {
             allow: 'multipart/form-data',
             multipart: true
           }
-          // pre: [{ method: upload.single('file'), assign: 'file' }]
         }
       }
     ]);
@@ -47,6 +44,13 @@ const postsPlugin = {
         method: 'GET',
         path: '/api/v1/posts/{id}',
         handler: getPostsById
+      }
+    ]);
+    server.route([
+      {
+        method: 'GET',
+        path: '/api/v1/{categories}/posts',
+        handler: getPostByCategory
       }
     ]);
 

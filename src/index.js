@@ -3,7 +3,7 @@ const Inert = require('@hapi/inert');
 const prisma = require('./plugins/prisma.plugins');
 const posts = require('./plugins/posts.plugins');
 const firebase = require('./plugins/firebase.plugins');
-const tutorials = require('./plugins/tutorials.plugins');
+const craftings = require('./plugins/crafting.plugins');
 const auth = require('./plugins/auth.plugins');
 const detectionPlugin = require('./plugins/detection.plugins');
 const clientPlugin = require('./plugins/client.plugins');
@@ -30,7 +30,7 @@ const init = async () => {
   await server.register([
     prisma,
     posts,
-    tutorials,
+    craftings,
     clientPlugin,
     firebase,
     auth
