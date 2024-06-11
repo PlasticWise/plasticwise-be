@@ -60,9 +60,11 @@ const postsPlugin = {
         method: 'PATCH',
         options: {
           payload: {
+            maxBytes: 1048576 * 3, //3MB Limit
             output: 'stream',
             parse: true,
-            allow: 'multipart/form-data'
+            allow: 'multipart/form-data',
+            multipart: true
           }
         },
         path: '/api/v1/posts/{id}',

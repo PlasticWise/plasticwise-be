@@ -2,6 +2,7 @@
 const { prisma } = require('../utils/db');
 const path = require('path');
 const { uploadToGCS } = require('../utils/upload');
+const { bucket } = require('../utils/gcs');
 
 const addPosts = async (request, h) => {
   try {
@@ -155,6 +156,20 @@ const updatePost = async (request, h) => {
 const deletePost = async (request, h) => {
   try {
     const { id } = request.params;
+
+    const post = await prisma.post.findFirst({
+      where: { id }
+    });
+
+    // Extract the file path from the URL
+    const filePath = post.imageUrl.replace(
+      `https://storage.googleapis.com/${process.env.GCS_BUCKET_NAME}/`,
+      ''
+    );
+
+    // Delete the file from cloud storage
+    await bucket.file(filePath).delete();
+
     await prisma.post.delete({
       where: { id: id }
     });
