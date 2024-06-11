@@ -30,6 +30,7 @@
     "@hapi/hapi": "^21.3.9",
     "@hapi/inert": "^7.1.0",
     "@prisma/client": "^5.14.0",
+    "@tensorflow/tfjs-node": "^4.20.0",
     "dateformat": "^5.0.3",
     "dotenv": "^16.4.5",
     "firebase": "^10.12.2",
