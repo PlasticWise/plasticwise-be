@@ -1,12 +1,14 @@
 const Hapi = require('@hapi/hapi');
+const Inert = require('@hapi/inert');
 const prisma = require('./plugins/prisma.plugins');
 const posts = require('./plugins/posts.plugins');
-// const firebase = require('./plugins/firebase.plugins');
-const tutorials = require('./plugins/tutorials.plugins');
-// const auth = require('./plugins/auth.plugins');
-const detectionPlugin = require('./plugins/detection.plugins');
 const loadModel = require('../src/services/loadModel');
 const InputError = require('./exceptions/InputError');
+const firebase = require('./plugins/firebase.plugins');
+const craftings = require('./plugins/crafting.plugins');
+const auth = require('./plugins/auth.plugins');
+const detectionPlugin = require('./plugins/detection.plugins');
+const clientPlugin = require('./plugins/client.plugins');
 
 const init = async () => {
   const server = Hapi.server({
@@ -18,10 +20,9 @@ const init = async () => {
       }
     }
   });
-
+  
   const model = await loadModel();
   server.app.model = model;
-  console.log(model);
 
   server.ext('onPreResponse', function (request, h) {
     const response = request.response;
@@ -47,7 +48,7 @@ const init = async () => {
     return h.continue;
   });
 
-  await server.register([prisma, posts, tutorials, detectionPlugin]);
+  await server.register(Inert);
 
   server.route({
     method: 'GET',
@@ -55,6 +56,16 @@ const init = async () => {
     handler: (request, h) => 'Hello, Hapi!'
   });
 
+  await server.register([
+    prisma,
+    posts,
+    craftings,
+    clientPlugin,
+    detectionPlugin,
+    firebase,
+    auth
+  ]);
+  
   await server.start();
   console.log('Server running on %s', server.info.uri);
 };

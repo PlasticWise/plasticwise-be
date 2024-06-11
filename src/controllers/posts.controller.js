@@ -1,40 +1,70 @@
-const { uploadToGCS } = require('../utils/upload');
+// const { uploadToGCS } = require('../utils/upload');
 const { prisma } = require('../utils/db');
+const path = require('path');
+const { uploadToGCS } = require('../utils/upload');
 
 const addPosts = async (request, h) => {
-  const { title, body, categories } = request.payload;
-  const file = request.payload.file;
-  const authorId = request.user;
+  try {
+    const { title, body, categories, type, file } = request.payload;
+    const authorId = request.user.id;
 
-  //validating title and author
-  const titleCheck = request.payload.hasOwnProperty('title');
-  const authorCheck = request.payload.hasOwnProperty('authorId');
+    //validating title and author
+    const titleCheck = request.payload.hasOwnProperty('title');
+    const authorCheck = request.payload.hasOwnProperty('authorId');
 
-  if (!titleCheck && authorCheck !== null) {
+    if (!titleCheck && authorCheck !== null) {
+      const response = h.response({
+        status: 'fail',
+        message: 'Gagal menambahkan postingan'
+      });
+      response.code(400);
+      return response;
+    }
+
+    if (!file) {
+      return h
+        .response({ status: 'fail', message: 'Image is required' })
+        .code(500);
+    }
+
+    // Read the file stream into a buffer
+    const fileBuffer = await new Promise((resolve, reject) => {
+      const chunks = [];
+      file.on('data', chunk => {
+        chunks.push(chunk);
+      });
+      file.on('end', () => {
+        resolve(Buffer.concat(chunks));
+      });
+      file.on('error', err => {
+        reject(err);
+      });
+    });
+
+    // Attach the buffer to the file object
+    file.buffer = fileBuffer;
+
+    imageUrl = await uploadToGCS(file);
+
+    const post = await prisma.post.create({
+      data: {
+        title: title,
+        authorId: authorId,
+        imageUrl: imageUrl,
+        body: body,
+        categories: categories,
+        type: type
+      }
+    });
+    return post;
+  } catch (error) {
     const response = h.response({
       status: 'fail',
-      message: 'Gagal menambahkan postingan'
+      message: error.message
     });
-    response.code(400);
+    response.code(500);
     return response;
   }
-
-  const imageUrl = null;
-
-  if (file) {
-    imageUrl = await uploadToGCS(file);
-  }
-
-  const post = await prisma.post.create({
-    data: {
-      title: title,
-      authorId: authorId,
-      imageUrl: imageUrl,
-      body: body,
-      categories: categories
-    }
-  });
-  return post;
 };
 
 const getPosts = async (request, h) => {
@@ -70,6 +100,30 @@ const getPostsById = async (request, h) => {
     });
     response.code(500);
     return response;
+  }
+};
+
+const getPostByCategory = async (request, h) => {
+  try {
+    const { categories } = request.params;
+
+    const splitCategory = categories.split('-').join(' ');
+
+    if (!splitCategory) {
+      return h.response({ error: error.message }).code(400);
+    }
+
+    const post = await prisma.post.findFirst({
+      where: {
+        categories: {
+          contains: splitCategory,
+          mode: 'insensitive'
+        }
+      }
+    });
+    return post;
+  } catch (error) {
+    return h.response({ status: 'fail', message: error }).code(500);
   }
 };
 
@@ -115,4 +169,11 @@ const deletePost = async (request, h) => {
   }
 };
 
-module.exports = { addPosts, getPosts, getPostsById, updatePost, deletePost };
+module.exports = {
+  addPosts,
+  getPosts,
+  getPostsById,
+  updatePost,
+  deletePost,
+  getPostByCategory
+};
