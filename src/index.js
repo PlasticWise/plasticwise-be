@@ -21,6 +21,7 @@ const init = async () => {
 
   const model = await loadModel();
   server.app.model = model;
+  console.log(model);
 
   server.ext('onPreResponse', function (request, h) {
     const response = request.response;
@@ -46,13 +47,14 @@ const init = async () => {
     return h.continue;
   });
 
+  await server.register([prisma, posts, tutorials, detectionPlugin]);
+
   server.route({
     method: 'GET',
     path: '/',
     handler: (request, h) => 'Hello, Hapi!'
   });
 
-  await server.register([prisma, posts, tutorials, detectionPlugin]);
   await server.start();
   console.log('Server running on %s', server.info.uri);
 };

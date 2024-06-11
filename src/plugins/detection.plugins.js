@@ -2,7 +2,7 @@ const { postDetectHandler } = require('../controllers/detection.controller');
 
 const detectionPlugin = {
   name: 'detection',
-  reguister: async function (server, options) {
+  register: async function (server, options) {
     server.route([
       {
         method: 'POST',
@@ -11,8 +11,7 @@ const detectionPlugin = {
         options: {
           payload: {
             allow: 'multipart/form-data',
-            multipart: true,
-            maxBytes: 1000000
+            multipart: true
           }
         }
       }

@@ -10,6 +10,10 @@ async function postDetectHandler(request, h) {
       model,
       image
     );
+
+    console.log(confidenceScore);
+    console.log(label);
+    console.log(message);
     const id = uuidv4();
     const createdAt = new Date().toISOString();
 
@@ -26,6 +30,7 @@ async function postDetectHandler(request, h) {
         confidenceScore > 99
           ? 'Model is predicted successfully.'
           : 'Model is predicted successfully but under threshold. Please use the correct picture',
+      confidence: confidenceScore,
       data: data
     });
 
