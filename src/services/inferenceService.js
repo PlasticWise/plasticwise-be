@@ -5,25 +5,16 @@ async function predicClassification(model, image) {
   try {
     // Decode and preprocess the image
     let tensor = tf.node.decodePng(image);
-    console.log('Initial tensor shape:', tensor.shape);
 
     tensor = tensor.resizeNearestNeighbor([224, 224]).toFloat();
-    console.log('Tensor after resizing:', tensor.shape);
-
-    console.log('Tensor before normalization:', tensor.arraySync());
 
     tensor = tensor.div(tf.scalar(255.0));
-    console.log('Tensor after normalization:', tensor.arraySync());
 
     tensor = tensor.expandDims();
-    console.log('Tensor after expanding dims:', tensor.shape);
 
     const prediction = model.predict(tensor);
     const score = await prediction.data();
-    console.log(await prediction);
-    console.log('score: ', score);
     const confidenceScore = Math.max(...score) * 100;
-    console.log('confidence score: ', confidenceScore);
 
     const classes = [
       'Botol Minum',
@@ -47,12 +38,9 @@ async function predicClassification(model, image) {
       'Styrofoam',
       'Wadah Makanan Plastik'
     ];
-    console.log('class: ', classes);
 
     const classResult = tf.argMax(prediction, 1).dataSync()[0];
-    console.log('class result: ', classResult);
     const label = classes[classResult];
-    console.log('label: ', label);
 
     let message = `Plastik berasal dari ${label}`;
 
