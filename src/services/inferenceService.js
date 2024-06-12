@@ -4,11 +4,13 @@ const InputError = require('../exceptions/InputError');
 async function predicClassification(model, image) {
   try {
     // Decode and preprocess the image
-    let tensor = tf.node.decodeJpeg(image);
+    let tensor = tf.node.decodePng(image);
     console.log('Initial tensor shape:', tensor.shape);
 
     tensor = tensor.resizeNearestNeighbor([224, 224]).toFloat();
     console.log('Tensor after resizing:', tensor.shape);
+
+    console.log('Tensor before normalization:', tensor.arraySync());
 
     tensor = tensor.div(tf.scalar(255.0));
     console.log('Tensor after normalization:', tensor.arraySync());
