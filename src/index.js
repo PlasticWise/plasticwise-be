@@ -20,7 +20,7 @@ const init = async () => {
       }
     }
   });
-  
+
   const model = await loadModel();
   server.app.model = model;
 
@@ -65,7 +65,7 @@ const init = async () => {
     firebase,
     auth
   ]);
-  
+
   await server.start();
   console.log('Server running on %s', server.info.uri);
 };
