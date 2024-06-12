@@ -12,3 +12,50 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  displayName String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  post     Post[]     @relation("authorPost")
+  crafting Crafting[] @relation("authorCrafting")
+
+  @@map("users")
+}
+
+model Post {
+  id         String   @id @default(cuid())
+  title      String
+  body       String
+  imageUrl   String? // Field untuk menyimpan URL gambar yang diupload
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  authorId   String
+  categories String //Field untuk menyimpan bahan plastiknya
+  type       String? //Field untuk menyimpan jenis plastiknya
+
+  author User @relation("authorPost", fields: [authorId], references: [id])
+
+  @@map("posts")
+}
+
+model Crafting {
+  id         String   @id @default(cuid())
+  title      String
+  tools      String[] //Field untuk menyimpan alat yang digunakan
+  equip      String[] //Field untuk menyimpan bahan yang digunakan
+  howto      String[]
+  imageUrl   String? // Field untuk menyimpan URL gambar yang diupload
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  authorId   String
+  categories String //Field untuk menyimpan bahan plastiknya
+  type       String? //Field untuk menyimpan jenis plastiknya
+
+  author User @relation("authorCrafting", fields: [authorId], references: [id])
+
+  @@map("crafting")
+}
