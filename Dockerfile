@@ -1,16 +1,20 @@
-FROM node:20.13.1-alpine
+FROM node:20.13.1
 
 # Create and change to the app directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copy application dependency manifests to the container image
 COPY package*.json ./
 
-# Install production dependencies
-RUN npm install
+COPY ./prisma prisma
 
 # Copy the local code to the container image
 COPY . .
+
+# Install production dependencies
+RUN npm install
+
+RUN npx prisma generate
 
 # Run the web service on container startup
 CMD [ "npm", "run", "start" ]
