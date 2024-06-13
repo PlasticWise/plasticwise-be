@@ -1,7 +1,10 @@
-FROM node:20.13.1
+FROM node:20
 
 # Create and change to the app directory
-WORKDIR /app
+WORKDIR /usr/src/app
+
+ENV PORT 3000
+ENV HOST 0.0.0.0
 
 # Copy application dependency manifests to the container image
 COPY package*.json ./
