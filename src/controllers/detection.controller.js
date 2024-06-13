@@ -11,9 +11,6 @@ async function postDetectHandler(request, h) {
       image
     );
 
-    console.log(confidenceScore);
-    console.log(label);
-    console.log(message);
     const id = uuidv4();
     const createdAt = new Date().toISOString();
 

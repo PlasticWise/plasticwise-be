@@ -5,6 +5,4 @@
 .dockerignore
 ./README.md
 ./.env
-./etc/certs/*
-./src/*.json
-./src/static/*
+./src/static/*.js

@@ -9,7 +9,6 @@ const craftings = require('./plugins/crafting.plugins');
 const auth = require('./plugins/auth.plugins');
 const detectionPlugin = require('./plugins/detection.plugins');
 const clientPlugin = require('./plugins/client.plugins');
-const { accessDBPermission, accessSAKey } = require('./static/secret-env');
 
 const init = async () => {
   const server = Hapi.server({
@@ -21,12 +20,6 @@ const init = async () => {
       }
     }
   });
-
-  // await accessSAKey();
-  await accessDBPermission();
-
-  console.log(process.env.DATABASE_URL);
-  console.log(process.env.GCS_KEYFILE);
 
   const model = await loadModel();
   server.app.model = model;
