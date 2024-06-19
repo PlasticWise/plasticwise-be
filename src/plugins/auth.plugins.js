@@ -51,12 +51,16 @@ const authPlugin = {
         }
       },
       {
-        method: 'GET',
-        path: '/api/v1/generateToken',
+        method: 'POST',
+        path: '/api/v1/generate/token',
         handler: async (request, h) => {
-          const token = await admin.auth().createCustomToken(uid); //change uid
-          console.log(token);
-          return h.response({ token });
+          try {
+            const user = request.user;
+            const token = await admin.auth().createCustomToken(user.id); //change uid
+            return h.response({ token }).code(200);
+          } catch (error) {
+            return h.response({ error: error.message }).code(400);
+          }
         }
       }
     ]);
