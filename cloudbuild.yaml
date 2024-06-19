@@ -1,0 +1,27 @@
+steps:
+  # Build container image
+  - name: 'plasticwise-be'
+    args:
+      [
+        'build',
+        '-t',
+        'asia-southeast2-docker.pkg.dev/$PROJECT_ID/plasticwise-be-repo',
+        '.'
+      ]
+  # Push the container image to Container Registry
+  - name: 'plasticwise-be'
+    args:
+      ['push', 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/plasticwise-be-repo']
+  # Deploy container image to Cloud Run
+  - name: 'plasticwise-be'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'plasticwise-be-repo'
+      - '--image'
+      - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/plasticwise-be-repo'
+      - '--region'
+      - 'asia-southeast2'
+images:
+  - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/plasticwise-be-repo/plasticwise-be'
