@@ -36,10 +36,6 @@ const firebasePlugin = {
           return h.continue;
         }
 
-        // Perform the authentication
-        // server.auth.scheme('firebase', () => ({ authenticate: validateUser }));
-        // server.auth.strategy('default', 'firebase');
-        // server.auth.default('default');
         return validateUser(request, h);
       }
     });

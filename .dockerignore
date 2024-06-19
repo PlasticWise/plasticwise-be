@@ -1,8 +1,8 @@
 # .dockerignore
-./node_modules
-./npm-debug.log
-./Dockerfile
+node_modules
+npm-debug.log
+Dockerfile
 .dockerignore
-./README.md
-./.env
-./src/static/*.js
+README.md
+.env
+/src/static/*.js

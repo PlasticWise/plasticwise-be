@@ -9,7 +9,6 @@ lerna-debug.log*
 
 # Another ignore
 /src/*.json
-/src/*.json*
 /src/plugins/client.plugins.js
 /src/controllers/client.controller.js
 /src/utils/firebaseClient.js

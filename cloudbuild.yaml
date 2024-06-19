@@ -1,27 +1,33 @@
 steps:
   # Build container image
-  - name: 'plasticwise-be'
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'plasticwise-be', '.']
+    # Tag container image
+  - name: 'gcr.io/cloud-builders/docker'
     args:
       [
-        'build',
-        '-t',
-        'asia-southeast2-docker.pkg.dev/$PROJECT_ID/plasticwise-be-repo',
-        '.'
+        'tag',
+        'plasticwise-be',
+        'asia-southeast2-docker.pkg.dev/$PROJECT_ID/plasticwise-be-repo/plasticwise-be'
       ]
   # Push the container image to Container Registry
-  - name: 'plasticwise-be'
+  - name: 'gcr.io/cloud-builders/docker'
     args:
-      ['push', 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/plasticwise-be-repo']
+      [
+        'push',
+        'asia-southeast2-docker.pkg.dev/$PROJECT_ID/plasticwise-be-repo/plasticwise-be'
+      ]
   # Deploy container image to Cloud Run
-  - name: 'plasticwise-be'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
       - 'run'
       - 'deploy'
       - 'plasticwise-be-repo'
       - '--image'
-      - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/plasticwise-be-repo'
+      - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/plasticwise-be-repo/plasticwise-be'
       - '--region'
       - 'asia-southeast2'
+      - '--allow-unauthenticated'
 images:
   - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/plasticwise-be-repo/plasticwise-be'

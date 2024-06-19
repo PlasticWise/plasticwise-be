@@ -1,7 +1,7 @@
 FROM node:20
 
 # Create and change to the app directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 ENV PORT 3000
 ENV HOST 0.0.0.0
