@@ -45,7 +45,7 @@ const addPosts = async (request, h) => {
     // Attach the buffer to the file object
     file.buffer = fileBuffer;
 
-    imageUrl = await uploadToGCS(file);
+    let imageUrl = await uploadToGCS(file);
 
     const post = await prisma.post.create({
       data: {
@@ -150,9 +150,36 @@ const updatePost = async (request, h) => {
     const file = request.payload.file;
 
     let imageUrl = null;
+
+    if (!file) {
+      return h
+        .response({ status: 'fail', message: 'Image is required' })
+        .code(500);
+    }
+
     if (file) {
       imageUrl = await uploadToGCS(file);
     }
+
+    // Read the file stream into a buffer
+    const fileBuffer = await new Promise((resolve, reject) => {
+      const chunks = [];
+      file.on('data', chunk => {
+        chunks.push(chunk);
+      });
+      file.on('end', () => {
+        resolve(Buffer.concat(chunks));
+      });
+      file.on('error', err => {
+        reject(err);
+      });
+    });
+
+    // Attach the buffer to the file object
+    file.buffer = fileBuffer;
+
+    imageUrl = await uploadToGCS(file);
+
     const post = await prisma.post.update({
       where: { id: id },
       data: { title, body, categories, imageUrl }
