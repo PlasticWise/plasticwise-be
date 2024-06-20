@@ -6,7 +6,8 @@ const {
   getPostsById,
   updatePost,
   deletePost,
-  getPostByCategory
+  getPostByCategory,
+  getAuthorPost
 } = require('../controllers/posts.controller');
 
 const postsPlugin = {
@@ -51,6 +52,14 @@ const postsPlugin = {
         method: 'GET',
         path: '/api/v1/{categories}/posts',
         handler: getPostByCategory
+      }
+    ]);
+
+    server.route([
+      {
+        method: 'GET',
+        path: '/api/v1/posts/author/{authorId}',
+        handler: getAuthorPost
       }
     ]);
 

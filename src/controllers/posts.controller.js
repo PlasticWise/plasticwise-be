@@ -128,6 +128,21 @@ const getPostByCategory = async (request, h) => {
   }
 };
 
+const getAuthorPost = async (request, h) => {
+  try {
+    const { authorId } = request.params;
+
+    const post = await prisma.post.findMany({
+      where: {
+        authorId: authorId
+      }
+    });
+    return post;
+  } catch (error) {
+    return h.response({ status: 'fail', message: error }).code(500);
+  }
+};
+
 const updatePost = async (request, h) => {
   try {
     const { id } = request.params;
@@ -190,5 +205,6 @@ module.exports = {
   getPostsById,
   updatePost,
   deletePost,
-  getPostByCategory
+  getPostByCategory,
+  getAuthorPost
 };
